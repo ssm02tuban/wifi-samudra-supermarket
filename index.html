@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#073b8c">
+<title>WiFi Samudra Supermarket</title>
+<style>
+:root{--blue:#073b8c;--navy:#061f4a;--gold:#f5bd45;--ink:#15233b;--muted:#64748b}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(145deg,#eaf2ff,#f7f9fc);color:var(--ink);display:flex;align-items:center;justify-content:center;padding:22px}
+.wrap{width:100%;max-width:440px}.card{background:#fff;border-radius:25px;overflow:hidden;box-shadow:0 18px 55px #0b2e661c}
+.hero{background:linear-gradient(135deg,var(--blue),var(--navy));color:white;text-align:center;padding:30px 24px 26px;position:relative}
+.logo{font-weight:900;font-size:29px;letter-spacing:2px}.sublogo{font-size:11px;letter-spacing:2.3px;color:#dce9ff;margin-top:4px}
+.wifi{font-size:42px;margin:19px 0 5px}.hero h1{font-size:22px;margin:0 0 7px}.hero p{font-size:13px;color:#dce9ff;margin:0;line-height:1.5}
+.body{padding:25px 24px 24px}.welcome{text-align:center;margin-bottom:20px}.welcome h2{font-size:18px;margin:0 0 7px}.welcome p{font-size:13px;color:var(--muted);margin:0;line-height:1.5}
+.network{background:#f3f7ff;border:1px solid #dce8ff;border-radius:15px;padding:15px;margin-bottom:17px}
+.label{font-size:10px;font-weight:700;letter-spacing:1.1px;color:#71809a;margin-bottom:7px}
+.value{font-size:16px;font-weight:700;overflow-wrap:anywhere}.pwrow{display:flex;align-items:center;justify-content:space-between;gap:8px}.pw{letter-spacing:2px}
+button{border:0;border-radius:12px;padding:13px 15px;font-size:14px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}.small{background:#e4edff;color:var(--blue);padding:9px 11px;font-size:12px}
+.check{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#53627a;line-height:1.5;margin:16px 0}.check input{margin-top:2px;accent-color:var(--blue);width:16px;height:16px;flex:none}
+.primary{width:100%;background:var(--blue);color:white;margin-top:5px}.secondary{width:100%;background:#eaf1ff;color:var(--blue);margin-top:10px}
+.notice{font-size:11px;color:var(--muted);line-height:1.5;text-align:center;margin-top:17px}
+#qrPanel{display:none;text-align:center;margin-top:20px;padding-top:19px;border-top:1px solid #e7edf5}
+#qrcode{display:flex;justify-content:center;background:white;padding:10px;margin:12px auto;width:max-content;border:1px solid #e5eaf2;border-radius:12px}
+#qrcode img,#qrcode canvas{max-width:100%;height:auto!important}
+#status{font-size:12px;color:#167447;min-height:17px;margin-top:8px}
+footer{text-align:center;color:#71809a;font-size:11px;margin-top:15px}
+@media(max-width:380px){body{padding:12px}.body{padding:20px}.hero{padding:25px 18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <main class="card">
+  <header class="hero">
+   <div class="logo">SAMUDRA</div><div class="sublogo">SUPERMARKET TUBAN</div>
+   <div class="wifi">⌁</div>
+   <h1>FREE WiFi</h1>
+   <p>Internet gratis untuk kenyamanan Anda<br>saat berbelanja di Samudra Supermarket.</p>
+  </header>
+  <section class="body">
+   <div class="welcome"><h2>Selamat Datang!</h2><p>Silakan setujui ketentuan penggunaan untuk melihat akses WiFi.</p></div>
+   <div class="network">
+    <div class="label">NAMA JARINGAN (SSID)</div>
+    <div class="value" id="ssid">Samudra Free WiFi</div>
+    <div style="height:14px"></div>
+    <div class="label">PASSWORD WIFI</div>
+    <div class="pwrow"><div class="value pw" id="password">••••••••••</div><button class="small" id="toggle" disabled>Lihat</button></div>
+   </div>
+   <label class="check"><input type="checkbox" id="agree"><span>Saya menyetujui penggunaan WiFi Samudra secara wajar, tidak mengakses konten ilegal, tidak melakukan tindakan yang mengganggu jaringan, dan memahami bahwa koneksi dapat dibatasi atau dihentikan sewaktu-waktu.</span></label>
+   <button class="primary" id="reveal" disabled>Setujui &amp; Lihat Password</button>
+   <button class="secondary" id="copy" disabled>Salin Password</button>
+   <div id="status" role="status" aria-live="polite"></div>
+   <div id="qrPanel">
+    <strong>Scan untuk terhubung ke WiFi</strong>
+    <p style="font-size:12px;color:#64748b;margin:7px 0">Arahkan kamera ponsel ke QR Code ini.</p>
+    <div id="qrcode"></div>
+    <p style="font-size:11px;color:#64748b">Jika pemindaian tidak otomatis tersambung, pilih jaringan <b>Samudra Free WiFi</b> lalu masukkan password yang ditampilkan.</p>
+   </div>
+   <p class="notice">Dengan menggunakan jaringan ini, Anda menyetujui ketentuan penggunaan WiFi Samudra Supermarket. Mohon jaga keamanan data pribadi Anda.</p>
+  </section>
+ </main>
+ <footer>Terima kasih telah berbelanja di Samudra Supermarket.</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(() => {
+ const SSID = "Samudra Free WiFi";
+ const PASSWORD = "Samudra02";
+ const agree = document.getElementById("agree");
+ const reveal = document.getElementById("reveal");
+ const toggle = document.getElementById("toggle");
+ const copy = document.getElementById("copy");
+ const pw = document.getElementById("password");
+ const status = document.getElementById("status");
+ const panel = document.getElementById("qrPanel");
+ let visible = false, accepted = false;
+ agree.addEventListener("change", () => { reveal.disabled = !agree.checked; });
+ reveal.addEventListener("click", () => {
+   if (!agree.checked) return;
+   accepted = true; visible = true;
+   pw.textContent = PASSWORD; pw.classList.remove("pw");
+   toggle.disabled = false; toggle.textContent = "Sembunyikan";
+   copy.disabled = false; panel.style.display = "block";
+   status.textContent = "Terima kasih. Password WiFi sudah ditampilkan.";
+   const wifiPayload = `WIFI:T:WPA;S:${SSID.replace(/([\\;,":])/g,'\\$1')};P:${PASSWORD.replace(/([\\;,":])/g,'\\$1')};;`;
+   const qr = document.getElementById("qrcode"); qr.innerHTML = "";
+   if (window.QRCode) new QRCode(qr, {text:wifiPayload,width:220,height:220,colorDark:"#061f4a",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+   else qr.textContent = "QR Code tidak dapat dimuat. Silakan gunakan nama jaringan dan password di atas.";
+ });
+ toggle.addEventListener("click", () => {
+   if (!accepted) return;
+   visible = !visible; pw.textContent = visible ? PASSWORD : "••••••••••";
+   pw.classList.toggle("pw", !visible); toggle.textContent = visible ? "Sembunyikan" : "Lihat";
+ });
+ copy.addEventListener("click", async () => {
+   if (!accepted) return;
+   try { await navigator.clipboard.writeText(PASSWORD); status.textContent = "Password berhasil disalin."; }
+   catch(e) { status.textContent = "Salin manual password: " + PASSWORD; }
+ });
+})();
+</script>
+</body>
+</html>
